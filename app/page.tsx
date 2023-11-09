@@ -1,5 +1,6 @@
 'use client';
 import { Dialog, DialogBody } from '@material-tailwind/react';
+import { HomeIcon, Instagram, Search, Twitter, Youtube } from 'lucide-react';
 import Image from 'next/image';
 import React, { FormEvent, useState } from 'react';
 
@@ -22,7 +23,7 @@ type ArtistInfoData = {
         url: string;
       }
     ];
-    spotify: [
+    youtube: [
       {
         url: string;
       }
@@ -132,18 +133,18 @@ export default function Home() {
       <div className={videos.length > 0 ? "flex flex-col" : "flex flex-col mt-16"}>
         <h1 className="text-4xl font-bold text-center">Melody Explorer</h1>
         <h3 className="text-center">
-          Conheça mais sobre seu artista favorito
+          Learn more about your favorite band
         </h3>
         <form onSubmit={handleSubmit} className="flex flex-col items-center justify-center">
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Pesquise Aqui"
-            className="p-2 border border-gray-300 rounded-md"
+            placeholder="Search for a band"
+            className="p-2 border border-gray-300 rounded-md mt-2"
           />
           <button type="submit" className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700">
-            Search
+            <Search />
           </button>
         </form>
       </div>
@@ -152,12 +153,26 @@ export default function Home() {
       <section className="mt-4 flex flex-col items-center justify-center">
         {artistInfo && (
           <div className="flex flex-col max-w-md w-full my-4 bg-white rounded-lg shadow-md">
-            <p className='font-bold'>{`Nome da Banda - ${artistInfo.name}`}</p>
-            <p className='font-bold'>{`URL - ${artistInfo.url}`}</p>
-            <p className='font-bold'>{`Homepage - ${artistInfo.externalLinks.homepage[0].url}`}</p>
-            <p className='font-bold'>{`Instagram - ${artistInfo.externalLinks.instagram[0].url}`}</p>
-            <p className='font-bold'>{`Twitter - ${artistInfo.externalLinks.twitter[0].url}`}</p>
-            <p className='font-bold'>{`Spotify - ${artistInfo.externalLinks.spotify[0].url}`}</p>
+            <h3 className='font-bold text-center text-xl my-1'>{`Band - ${artistInfo.name}`}</h3>
+            <h4 className='font-bold text-center my-1'>Social Links:</h4>
+            <div className="grid grid-cols-2 gap-4 justify-items-center">
+                <a href={artistInfo.externalLinks.homepage[0].url} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center">
+                  <HomeIcon />
+                  <span>Homepage</span>
+                </a>
+                <a href={artistInfo.externalLinks.instagram[0].url} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center">
+                  <Instagram />
+                  <span>Instagram</span>
+                </a>
+                <a href={artistInfo.externalLinks.twitter[0].url} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center">
+                  <Twitter />
+                  <span>Twitter</span>
+                </a>
+                <a href={artistInfo.externalLinks.youtube[0].url} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center">
+                  <Youtube />
+                  <span>Youtube</span>
+                </a>
+            </div>
           </div>
         )}
       </section>
@@ -200,7 +215,7 @@ export default function Home() {
               </Dialog>
               </div>
           </div>
-        ))};
+        ))}
       </div>
     </section>
   );
