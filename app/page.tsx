@@ -1,8 +1,10 @@
 'use client';
 import { Dialog, DialogBody } from '@material-tailwind/react';
-import { HomeIcon, Instagram, Search, Twitter, Youtube } from 'lucide-react';
+import { HomeIcon, Instagram, Search, Twitter, XCircle, Youtube } from 'lucide-react';
 import Image from 'next/image';
 import React, { FormEvent, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 type ArtistInfoData = {
   name: string;
@@ -55,6 +57,13 @@ type YoutubeVideoItem = {
   };
 };
 
+type SocialMediaLinks = {
+  url: string;
+};
+
+type SocialLinksArray = SocialMediaLinks[] | undefined;
+
+type IconComponentType = React.FC;
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -98,9 +107,15 @@ export default function Home() {
         throw new Error(`HTTP error! status: ${response.status}`);
       };
       const data = await response.json();
-      return data._embedded.attractions[0];
+      if (data._embedded && data._embedded.attractions.length > 0) {
+        return data._embedded.attractions[0];
+      } else {
+        toast.error("Band data not found");
+        return null;
+      }
     } catch (error) {
       console.error("Failed to fetch artist info:", error);
+      toast.error("Failed to fetch artist info");
       return null
     };
   };
@@ -108,9 +123,28 @@ export default function Home() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!searchTerm) {
-      alert('Please enter a search term');
+      toast.warn('🎧 Insert a band in the search bar!', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       return;
     };
+    toast.info('Loading... Please wait.', {
+      position: "top-center",
+      autoClose: false, 
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "light",
+      toastId: 'loadingId'
+    });
     setLoading(true);
     try {
       const videos = await fetchYoutubeVideos(searchTerm);
@@ -118,19 +152,52 @@ export default function Home() {
       setVideos(videos);
       setArtistInfo(artistInfo);
       setError(null);
-      console.log(videos)
+      toast.dismiss('loadingId');
+      console.log(videos);
       console.log(artistInfo);
     } catch (error) {
-      setError("Failed to fetch videos");
+      console.error("Failed to fetch videos");
+      toast.error('🎧 Failed to fetch videos. Please try again later.')
       setVideos([]);
+      toast.dismiss('loadingId');
     };
     setLoading(false);
+  };
+
+  function renderSocialLinks(urlArray: SocialLinksArray, IconComponent:IconComponentType, label: string) {
+    if (urlArray && urlArray.length > 0 && urlArray[0]) {
+      return (
+        <a href={urlArray[0].url} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center">
+          <IconComponent />
+          <span>{label}</span>
+        </a>
+      );
+    } else {
+      return (
+        <div className="flex flex-col items-center">
+          <XCircle className="text-red-500" />
+          <span>{label} Not found</span>
+        </div>
+      )
+    };
   };
 
 
   return (
     <section className="block p-4 w-full m-auto">
-      <div className={videos.length > 0 ? "flex flex-col" : "flex flex-col mt-16"}>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      <div className={videos.length > 0 ? "flex flex-col" : "flex flex-col items-center justify-center min-h-screen"}>
         <h1 className="text-4xl font-bold text-center">Melody Explorer</h1>
         <h3 className="text-center">
           Learn more about your favorite band
@@ -148,30 +215,16 @@ export default function Home() {
           </button>
         </form>
       </div>
-      {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
       <section className="mt-4 flex flex-col items-center justify-center">
         {artistInfo && (
           <div className="flex flex-col max-w-md w-full my-4 bg-white rounded-lg shadow-md">
             <h3 className='font-bold text-center text-xl my-1'>{`Band - ${artistInfo.name}`}</h3>
             <h4 className='font-bold text-center my-1'>Social Links:</h4>
             <div className="grid grid-cols-2 gap-4 justify-items-center">
-                <a href={artistInfo.externalLinks.homepage[0].url} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center">
-                  <HomeIcon />
-                  <span>Homepage</span>
-                </a>
-                <a href={artistInfo.externalLinks.instagram[0].url} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center">
-                  <Instagram />
-                  <span>Instagram</span>
-                </a>
-                <a href={artistInfo.externalLinks.twitter[0].url} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center">
-                  <Twitter />
-                  <span>Twitter</span>
-                </a>
-                <a href={artistInfo.externalLinks.youtube[0].url} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center">
-                  <Youtube />
-                  <span>Youtube</span>
-                </a>
+              {renderSocialLinks(artistInfo?.externalLinks?.homepage, HomeIcon, 'Homepage')}
+              {renderSocialLinks(artistInfo?.externalLinks?.instagram, Instagram, 'Instagram')}
+              {renderSocialLinks(artistInfo?.externalLinks?.twitter, Twitter, 'Twitter')}
+              {renderSocialLinks(artistInfo?.externalLinks?.youtube, Youtube, 'Youtube')}
             </div>
           </div>
         )}
@@ -197,9 +250,9 @@ export default function Home() {
               <p className="text-gray-600 text-sm">Uploaded by: {video.uploader ?? 'Unknown'}</p>
             </div>
             <div className="flex justify-center items-center pb-4">
-            <button type="submit" onClick={handleOpen} className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700">
-              See Video
-            </button>
+              <button type="submit" onClick={handleOpen} className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700">
+                See Video
+              </button>
               <Dialog open={open} handler={handleOpen} size='xs'>
                 <DialogBody>
                   <iframe
@@ -213,7 +266,7 @@ export default function Home() {
                   />
                 </DialogBody>
               </Dialog>
-              </div>
+            </div>
           </div>
         ))}
       </div>
