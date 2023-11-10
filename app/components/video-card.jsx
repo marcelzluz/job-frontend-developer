@@ -3,8 +3,8 @@ import Image from 'next/image';
 import { Dialog, DialogBody } from '@material-tailwind/react';
 
 export const VideoCard = ({ video, open, handleOpen }) => (
-  <div className="flex flex-col max-w-md w-full my-4 bg-white rounded-lg shadow-md">
-    <div className="relative h-48 w-full mt-4">
+  <div className="flex flex-col md:flex-row max-w-sm md:max-w-3xl w-full my-4 bg-white rounded-lg shadow-md">
+    <div className="relative h-48 w-full md:w-1/2 mt-4">
       <Image
         src={video.thumbnail}
         alt={`Thumbnail of ${video.title}`}
@@ -12,7 +12,7 @@ export const VideoCard = ({ video, open, handleOpen }) => (
         objectFit='contain'
       />
     </div>
-    <div className="p-4 flex flex-col justify-between">
+    <div className="p-4 flex flex-col justify-between md:w-1/2">
       <div className="mb-8">
         <h3 className="text-gray-900 font-bold text-xl mb-2">
           {video.title}
@@ -21,8 +21,8 @@ export const VideoCard = ({ video, open, handleOpen }) => (
       </div>
       <p className="text-gray-600 text-sm">Uploaded by: {video.uploader ?? 'Unknown'}</p>
     </div>
-    <div className="flex justify-center items-center pb-4">
-      <button type="button" onClick={handleOpen} className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700">
+    <div className="flex justify-center items-center pb-4 md:mx-4">
+      <button type="button" onClick={handleOpen} className="mt-4 px-6 py-2  bg-blue-500 text-white rounded-md hover:bg-blue-700">
         See Video
       </button>
       {open && (
