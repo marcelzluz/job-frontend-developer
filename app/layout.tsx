@@ -6,7 +6,7 @@ import Home from './page';
 const nunitoSans = Nunito_Sans({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: '🎧 Melody Explorer',
+  title: '🎧 Melody Explorer 🎧',
   description: 'Conheça mais sobre seu artista favorito',
 };
 

@@ -14,9 +14,11 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [videos, setVideos] = useState<Videos[]>([]);
   const [artistInfo, setArtistInfo] = useState<ArtistInfoData>();
-  const [open, setOpen] = useState(false);
+  const [openVideoId, setOpenVideoId] = useState<string | null>(null);
 
-  const handleOpen = () => setOpen(!open);
+  const handleOpen = (videoId: string | null) => {
+    setOpenVideoId(openVideoId === videoId ? null : videoId);
+  };
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -91,7 +93,8 @@ export default function Home() {
       </section>
       <div className="mt-4 flex flex-col items-center justify-center">
         {videos.map((video) => (
-          <VideoCard key={video.id} video={video} open={open} handleOpen={handleOpen} />
+          console.log(video.id),
+          <VideoCard key={video.id} video={video} open={openVideoId === video.id} handleOpen={() => handleOpen(video.id)} />
         ))}
       </div>
     </section>
