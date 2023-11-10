@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Nunito_Sans } from 'next/font/google'
 import './globals.css'
+import Home from './page';
 
 const nunitoSans = Nunito_Sans({ subsets: ['latin'] });
 
@@ -18,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={nunitoSans.className}>
         <main className="min-h-screen w-full text-gray-800">
-        {children}
+        <Home />
         </main>
       </body>
     </html>
