@@ -51,8 +51,6 @@ export default function Home() {
       setVideos(videos);
       setArtistInfo(artistInfo);
       toast.dismiss('loadingId');
-      console.log(videos);
-      console.log(artistInfo);
     } catch (error) {
       console.error("Failed to fetch videos");
       toast.error('🎧 Failed to fetch videos. Please try again later.')
@@ -93,7 +91,6 @@ export default function Home() {
       </section>
       <div className="mt-4 flex flex-col items-center justify-center">
         {videos.map((video) => (
-          console.log(video.id),
           <VideoCard key={video.id} video={video} open={openVideoId === video.id} handleOpen={() => handleOpen(video.id)} />
         ))}
       </div>

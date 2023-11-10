@@ -1,6 +1,5 @@
 export async function fetchYoutubeVideos(searchTerm) {
   const YOUTUBE_API_KEY_TOKEN = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
-  console.log(process.env.NEXT_PUBLIC_YOUTUBE_API_KEY);
   const baseUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(searchTerm)}&key=${YOUTUBE_API_KEY_TOKEN}`;
 
   try {
