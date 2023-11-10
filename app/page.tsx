@@ -5,79 +5,19 @@ import Image from 'next/image';
 import React, { FormEvent, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-type ArtistInfoData = {
-  name: string;
-  url: string;
-  externalLinks: {
-    homepage: [
-      {
-        url: string;
-      }
-    ];
-    instagram: [
-      {
-        url: string;
-      }
-    ];
-    twitter: [
-      {
-        url: string;
-      }
-    ];
-    youtube: [
-      {
-        url: string;
-      }
-    ];
-  };
-};
-
-
-type Videos = {
-  id: string;
-  title: string;
-  description: string;
-  thumbnail: string;
-  rating?: number;
-  uploader: string;
-};
-
-type YoutubeVideoItem = {
-  id: { videoId: string };
-  snippet: {
-    title: string;
-    description: string;
-    thumbnails: {
-      high: {
-        url: string;
-      };
-    };
-    channelTitle: string;
-  };
-};
-
-type SocialMediaLinks = {
-  url: string;
-};
-
-type SocialLinksArray = SocialMediaLinks[] | undefined;
-
-type IconComponentType = React.FC;
+import { ArtistInfoData, IconComponentType, SocialLinksArray, Videos, YoutubeVideoItem } from './types';
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [videos, setVideos] = useState<Videos[]>([]);
   const [artistInfo, setArtistInfo] = useState<ArtistInfoData>();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(!open);
 
   async function fetchYoutubeVideos(searchTerm: string) {
-    const YOUTUBE_API_KEY = 'AIzaSyBY0olt3bwN4-7YRckfEMScfPpYY8JQW4w';
-    const baseUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(searchTerm)}&key=${YOUTUBE_API_KEY}`;
+    const YOUTUBE_API_KEY_TOKEN = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
+    const baseUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(searchTerm)}&key=${YOUTUBE_API_KEY_TOKEN}`;
 
     try {
       const response = await fetch(baseUrl);
@@ -98,8 +38,8 @@ export default function Home() {
   };
 
   async function fetchArtistInfo(searchTerm: string) {
-    const TICKETMASTER_API_KEY = 'x9TAS10ua31T7nONj8geuWe7Cnp7OixA';
-    const baseURL = `https://app.ticketmaster.com/discovery/v2/attractions.json?keyword=${encodeURIComponent(searchTerm)}&classificationName=Music&apikey=${TICKETMASTER_API_KEY}`;
+    const TICKETMASTER_API_KEY_TOKEN = process.env.NEXT_PUBLIC_TICKETMASTER_API_KEY;
+    const baseURL = `https://app.ticketmaster.com/discovery/v2/attractions.json?keyword=${encodeURIComponent(searchTerm)}&classificationName=Music&apikey=${TICKETMASTER_API_KEY_TOKEN}`;
 
     try {
       const response = await fetch(baseURL);
@@ -145,13 +85,11 @@ export default function Home() {
       theme: "light",
       toastId: 'loadingId'
     });
-    setLoading(true);
     try {
       const videos = await fetchYoutubeVideos(searchTerm);
       const artistInfo = await fetchArtistInfo(searchTerm);
       setVideos(videos);
       setArtistInfo(artistInfo);
-      setError(null);
       toast.dismiss('loadingId');
       console.log(videos);
       console.log(artistInfo);
@@ -161,7 +99,6 @@ export default function Home() {
       setVideos([]);
       toast.dismiss('loadingId');
     };
-    setLoading(false);
   };
 
   function renderSocialLinks(urlArray: SocialLinksArray, IconComponent:IconComponentType, label: string) {
