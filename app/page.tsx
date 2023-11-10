@@ -74,8 +74,8 @@ export default function Home() {
         theme="light"
       />
       <div className={videos.length > 0 ? "flex flex-col" : "flex flex-col items-center justify-center min-h-screen"}>
-        <h1 className="text-4xl font-bold text-center">Melody Explorer</h1>
-        <h3 className="text-center">
+        <h1 className="text-4xl font-bold text-center text-stone-50">Melody Explorer</h1>
+        <h3 className="text-center text-white">
           Learn more about your favorite band
         </h3>
         <SearchForm

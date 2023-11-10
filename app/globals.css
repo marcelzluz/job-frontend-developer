@@ -17,7 +17,8 @@
 } */
 
 body {
-  background: #bdc3c7;
-  background: -webkit-linear-gradient(to right, #bdc3c7, #2c3e50);
-  background: linear-gradient(to right, #bdc3c7, #2c3e50);
+  background: #232526;  
+  background: -webkit-linear-gradient(to right, #414345, #232526);  
+  background: linear-gradient(to right, #414345, #232526);
+  
 }
