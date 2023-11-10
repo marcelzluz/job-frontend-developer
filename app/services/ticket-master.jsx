@@ -2,6 +2,7 @@ import { toast } from "react-toastify";
 
 export async function fetchArtistInfo(searchTerm) {
   const TICKETMASTER_API_KEY_TOKEN = process.env.NEXT_PUBLIC_TICKETMASTER_API_KEY;
+  console.log(process.env.NEXT_PUBLIC_TICKETMASTER_API_KEY);
   const baseURL = `https://app.ticketmaster.com/discovery/v2/attractions.json?keyword=${encodeURIComponent(searchTerm)}&classificationName=Music&apikey=${TICKETMASTER_API_KEY_TOKEN}`;
 
   try {
